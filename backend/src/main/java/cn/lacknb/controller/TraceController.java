@@ -80,6 +80,8 @@ public class TraceController {
                 traceInfo.setExpressName(expressTrace.getExpressName(traceInfo.getExpressNumber()));
             }
             traceInfoService.addTraceInfo(traceInfo);
+            // 添加之后，查询一下
+            trace();
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(ErrorEnum.PATH_NOT_FOUND);
