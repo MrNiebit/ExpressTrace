@@ -62,8 +62,10 @@ public class TraceTask {
 
         log.info("跟踪执行。。。。。。");
         List<TraceInfo> allTraceInfo = traceInfoService.findAllTraceInfo();
+        String KEY = null;
         for (TraceInfo traceInfo : allTraceInfo) {
-            Integer lastTrace = (Integer) context.getAttribute(traceInfo.getMail() + traceInfo.getExpressNumber());
+            KEY = traceInfo.getMail() + traceInfo.getExpressNumber();
+            Integer lastTrace = (Integer) context.getAttribute(KEY);
             String status = null;
             try {
                 JSONObject jsonObject = JSON.parseObject(traceController.selectExpress(traceInfo.getExpressName(), traceInfo.getExpressNumber())).getJSONObject("info");
@@ -73,21 +75,21 @@ public class TraceTask {
                     // 删除该单号
 //                    traceInfoService.deleteTranceInfo(traceInfo);
                     // 修改成 每天凌晨0点清理 暂无数据的 单号
-                    context.removeAttribute(traceInfo.getExpressNumber());
+                    context.removeAttribute(KEY);
                 } else if ("已签收".equals(status)) {
                     // 签收之后
                     mailService.sendHtmlMail(traceInfo.getMail(), "物流跟踪", "单号：" + traceInfo.getExpressNumber() + "</br> 所属快递：" + traceInfo.getExpressName() + "</br>" + jsonObject.getString("latest_time") + "== ： " + jsonObject.getString("latest_progress"));
                     traceInfoService.deleteTranceInfo(traceInfo);
-                    context.removeAttribute(traceInfo.getExpressNumber());
+                    context.removeAttribute(KEY);
                 } else /*("运输中".equals(status) || "已揽件".equals(status))*/{
                     if (lastTrace != null) {
-                        Integer context = jsonObject.getJSONArray("context").size();
+                        int context = jsonObject.getJSONArray("context").size();
                         if (context > lastTrace) {
                             mailService.sendHtmlMail(traceInfo.getMail(), "物流跟踪", "单号：" + traceInfo.getExpressNumber() + "</br> 所属快递：" + traceInfo.getExpressName() + "</br>" + jsonObject.getString("latest_time") + "== ： " + jsonObject.getString("latest_progress"));
                         }
                     }
                     // 更新context
-                    context.setAttribute(traceInfo.getMail() + traceInfo.getExpressNumber(), jsonObject.getJSONArray("context").size());
+                    context.setAttribute(KEY, jsonObject.getJSONArray("context").size());
                 }
 //               // 增加1秒的延迟
                 Thread.sleep(1000);
