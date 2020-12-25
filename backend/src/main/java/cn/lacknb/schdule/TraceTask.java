@@ -95,6 +95,8 @@ public class TraceTask {
                 Thread.sleep(1000);
             } catch (Exception e) {
                 e.printStackTrace();
+                // 清理 获取 数据异常 的单号。
+                traceInfoService.deleteTranceInfo(traceInfo);
             }
 
         }

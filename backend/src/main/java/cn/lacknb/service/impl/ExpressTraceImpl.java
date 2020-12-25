@@ -28,15 +28,22 @@ public class ExpressTraceImpl implements ExpressTrace {
     @Override
     public String getExpressName (String number) throws IOException {
         Map<String, String> datas = new HashMap<>();
-        datas.put("result", "1");
-        datas.put("text", number);
+//        datas.put("result", "1");
+//        datas.put("text", number);
+
+        /*
+          更新了，快递100 采用 Pathvariable方式 获取参数
+         */
+
+        String expressUrl = "https://www.kuaidi100" +
+                ".com/autonumber/autoComNum?text=" + number;
         String name = "auto";
         try {
-            String text = Jsoup.connect("https://www.kuaidi100.com/autonumber/autoComNum")
+            String text = Jsoup.connect(expressUrl)
                     .ignoreContentType(true)
                     .headers(headers)
                     .data(datas).post().body().text();
-            JSON.parseObject(text).getJSONArray("auto").getJSONObject(0).getString("comCode");
+            return JSON.parseObject(text).getJSONArray("auto").getJSONObject(0).getString("comCode");
         } catch (Exception e) {
             e.printStackTrace();
         }

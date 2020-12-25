@@ -44,7 +44,7 @@ public class ExpressBaiduImpl implements ExpressBaidu {
                      text = Jsoup.connect(apiUrl + "&appid=4001&com=" + expressName + "&nu=" + expressNumber)
                          .ignoreContentType(true)
                         .headers(map).get().body().text();
-//                JSONObject jsonObject = new JSONObject(text);
+//                JSONObject jsonObject = new JSONObject    (text);
 //                 if (!"1".equals(jsonObject.getString("error_code"))) {
 //                     log.info("失效。。。。重新获取");
 //                     apiUrl = getApiUrl();
