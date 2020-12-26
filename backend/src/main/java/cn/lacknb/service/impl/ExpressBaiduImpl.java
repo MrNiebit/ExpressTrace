@@ -1,12 +1,15 @@
 package cn.lacknb.service.impl;
 
 import cn.lacknb.enums.ErrorEnum;
+import cn.lacknb.exception.ExpressException;
 import cn.lacknb.service.ExpressBaidu;
 import cn.lacknb.utils.Result;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +39,7 @@ public class ExpressBaiduImpl implements ExpressBaidu {
     }
 
     @Override
-    public String getLatestMessage(String expressName, String expressNumber) {
+    public String getLatestMessage(String expressName, String expressNumber) throws ExpressException {
         String text = null;
         apiUrl = getApiUrl();
         if (null != apiUrl) {
@@ -50,7 +53,13 @@ public class ExpressBaiduImpl implements ExpressBaidu {
 //                     apiUrl = getApiUrl();
 //                     text = getLatestMessage(expressName, expressNumber);
 //                 }
-                text = JSON.parseObject(text).get("data").toString();
+                JSONObject jsonObject = JSON.parseObject(text);
+                String status = jsonObject.getString("status");
+                if (StringUtils.isEmpty(status) || "-2".equals(status)) {
+                    throw new ExpressException("单号无效...");
+                }
+                text = jsonObject.get("data").toString();
+
             } catch (Exception e) {
                 e.printStackTrace();
                 return JSON.toJSONString(Result.error(ErrorEnum.PATH_NOT_FOUND));

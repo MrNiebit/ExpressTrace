@@ -1,5 +1,7 @@
 package cn.lacknb.service;
 
+import cn.lacknb.exception.ExpressException;
+
 /**
  * ClassName: ExpressBaidu <br/>
  * Description:  <br/>
@@ -9,6 +11,6 @@ package cn.lacknb.service;
  */
 public interface ExpressBaidu {
 
-    String getLatestMessage(String expressName, String expressNumber);
+    String getLatestMessage(String expressName, String expressNumber) throws ExpressException;
 
 }

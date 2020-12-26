@@ -27,7 +27,6 @@ public class ExpressTraceImpl implements ExpressTrace {
 
     @Override
     public String getExpressName (String number) throws IOException {
-        Map<String, String> datas = new HashMap<>();
 //        datas.put("result", "1");
 //        datas.put("text", number);
 
@@ -42,7 +41,7 @@ public class ExpressTraceImpl implements ExpressTrace {
             String text = Jsoup.connect(expressUrl)
                     .ignoreContentType(true)
                     .headers(headers)
-                    .data(datas).post().body().text();
+                    .post().body().text();
             return JSON.parseObject(text).getJSONArray("auto").getJSONObject(0).getString("comCode");
         } catch (Exception e) {
             e.printStackTrace();

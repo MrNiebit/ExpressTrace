@@ -1,6 +1,7 @@
 package cn.lacknb.schdule;
 
 import cn.lacknb.controller.TraceController;
+import cn.lacknb.exception.ExpressException;
 import cn.lacknb.pojo.TraceInfo;
 import cn.lacknb.service.MailService;
 import cn.lacknb.service.TraceInfoService;
@@ -57,7 +58,7 @@ public class TraceTask {
     // 从25分开始，每间隔25分钟执行一次。也就是 每个整点执行一次。
     @Scheduled(cron = "0 25/25 * * * ? ")
 //    @Scheduled(fixedRate = 2000)
-    @Async
+//    @Async
     public void mainTrace () {
 
         log.info("跟踪执行。。。。。。");
@@ -93,10 +94,12 @@ public class TraceTask {
                 }
 //               // 增加1秒的延迟
                 Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 清理 获取 数据异常 的单号。
+            } catch (ExpressException ex) {
+                ex.printStackTrace();
                 traceInfoService.deleteTranceInfo(traceInfo);
+                context.removeAttribute(KEY);
+            }  catch (Exception e) {
+                e.printStackTrace();
             }
 
         }

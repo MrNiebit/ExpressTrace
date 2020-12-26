@@ -1,6 +1,7 @@
 package cn.lacknb.controller;
 
 import cn.lacknb.enums.ErrorEnum;
+import cn.lacknb.exception.ExpressException;
 import cn.lacknb.pojo.TraceInfo;
 import cn.lacknb.schdule.TraceTask;
 import cn.lacknb.service.ExpressBaidu;
@@ -99,7 +100,7 @@ public class TraceController {
      * @throws IOException
      */
     @RequestMapping("/express")
-    public String selectExpress(String expressName, String expressNumber) throws IOException {
+    public String selectExpress(String expressName, String expressNumber) throws ExpressException {
         if (!StringUtils.isEmpty(expressName) && !StringUtils.isEmpty(expressNumber)) {
             String latestMessage = expressBaidu.getLatestMessage(expressName, expressNumber);
             if (null != latestMessage) {
@@ -118,7 +119,7 @@ public class TraceController {
                         newName = expressTrace.getExpressName(expressNumber);
                         System.out.println(newName);
                         return expressBaidu.getLatestMessage(newName, expressNumber);
-                    } catch (JSONException e) {
+                    } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
                 }
